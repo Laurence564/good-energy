@@ -1,12 +1,13 @@
 import {expect, type Locator, type Page, test} from '@playwright/test';
+import {InventoryPage} from "./inventory.page";
 
 export class LoginPage {
     private readonly page: Page;
 
-    readonly usernameInput: Locator;
-    readonly passwordInput: Locator;
-    readonly errorMessage: Locator;
-    readonly loginButton: Locator;
+    private readonly usernameInput: Locator;
+    private readonly passwordInput: Locator;
+    private readonly errorMessage: Locator;
+    private readonly loginButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -30,6 +31,14 @@ export class LoginPage {
 
     async submit(): Promise<void> {
         await this.loginButton.click();
+    }
+
+    async submitExpectingSuccess(): Promise<InventoryPage> {
+        return await test.step('Expect login to be accepted', async () => {
+            await this.loginButton.click();
+            await expect(this.page).toHaveURL('/inventory.html');
+            return new InventoryPage(this.page);
+        });
     }
 
     async expectingError(expected: string): Promise<void> {
