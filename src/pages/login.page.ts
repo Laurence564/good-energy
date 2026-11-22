@@ -1,4 +1,4 @@
-import {type Locator, type Page} from '@playwright/test';
+import {expect, type Locator, type Page, test} from '@playwright/test';
 
 export class LoginPage {
     private readonly page: Page;
@@ -18,5 +18,13 @@ export class LoginPage {
 
     async submit(): Promise<void> {
         await this.loginButton.click();
+    }
+
+    async expectingError(expected: string): Promise<void> {
+        await test.step(`Expect login rejected with: "${expected}"`, async () => {
+            await expect(this.errorMessage).toBeVisible();
+            await expect(this.errorMessage).toHaveText(expected);
+            await expect(this.page).toHaveURL('/');
+        });
     }
 }
