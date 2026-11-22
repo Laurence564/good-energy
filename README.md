@@ -1,5 +1,6 @@
 # 🌱 Good Energy
 
-[![typescript](https://img.shields.io/github/package-json/dependency-version/laurence564/good-energy/dev/typescript?logo=typescript&logoColor=white&color=3178C6)](https://www.typescriptlang.org/)
-[![playwright](https://img.shields.io/github/package-json/dependency-version/laurence564/good-energy/dev/@playwright/test?logo=playwright&logoColor=2EAD33&color=2EAD33)](https://playwright.dev/)
+[![typescript](https://img.shields.io/badge/typescript-7.0.2-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![playwright](https://img.shields.io/badge/playwright-1.65.1-2EAD33?logo=playwright&logoColor=2EAD33)](https://playwright.dev/)
+
 
