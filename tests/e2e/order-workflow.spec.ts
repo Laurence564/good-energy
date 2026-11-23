@@ -3,10 +3,11 @@ import {LoginPage} from '../../src/pages/login.page';
 import {Users} from '../../src/data/users';
 import {Products} from "../../src/data/product";
 import {Orders} from "../../src/data/order";
+import {Receipt} from '../../src/data/receipt';
 
 test.describe('Product order e2e', () => {
     test('Order a single product',
-        async ({page}) => {
+        async ({page}, testInfo) => {
 
             const order = Orders.singleBikeLight;
 
@@ -75,7 +76,28 @@ test.describe('Product order e2e', () => {
             await expect(checkoutCompletePage.completeHeader).toHaveText('Thank you for your order!');
             await expect(checkoutCompletePage.completeText).toBeVisible();
 
-            // The order is placed, so the basket is emptied.
             await expect(checkoutCompletePage.basketCount).toBeHidden();
+
+            const download = await checkoutCompletePage.downloadReceipt();
+            const receipt = await Receipt.fromDownload(download);
+
+            // Embed the actual PDF in the HTML report, so a failing assertion
+            // below can be checked against the document the test really saw.
+            await testInfo.attach('order-receipt', {
+                body: receipt.buffer,
+                contentType: 'application/pdf',
+            });
+
+            expect(receipt.text).toContain(order.customer.fullName);
+            expect(receipt.text).toContain(order.customer.postalCode);
+
+            for (const product of order.products) {
+                expect(receipt.text).toContain(product.name);
+                expect(receipt.text).toContain(product.price);
+            }
+
+            expect(receipt.itemTotal).toBe(order.itemTotal);
+            expect(receipt.tax).toBe(order.tax);
+            expect(receipt.total).toBe(order.total);
         });
 });
