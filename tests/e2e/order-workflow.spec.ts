@@ -3,10 +3,13 @@ import {LoginPage} from '../../src/pages/login.page';
 import {Users} from '../../src/data/users';
 import {Products} from "../../src/data/product";
 import {Customers} from "../../src/data/customer";
+import {Orders} from "../../src/data/order";
 
 test.describe('Product order e2e', () => {
     test('Order a single product',
         async ({page}) => {
+
+             const order = Orders.singleBikeLight;
 
             const loginPage = new LoginPage(page);
             await loginPage.goto();
@@ -39,21 +42,21 @@ test.describe('Product order e2e', () => {
             await expect(cartItem.productDescription).toHaveText(Products.bikeLight.description);
             await expect(cartItem.productPrice).toHaveText(Products.bikeLight.price);
 
-            const checkoutInformationPage = await cartPage.checkout();
+           const checkoutInformationPage = await cartPage.checkout();
 
             await expect(checkoutInformationPage.title).toBeVisible();
             await expect(checkoutInformationPage.title).toHaveText('Checkout: Your Information');
 
-            await checkoutInformationPage.enterFirstName(Customers.standard.firstName);
-            await checkoutInformationPage.enterLastName(Customers.standard.lastName);
-            await checkoutInformationPage.enterPostalCode(Customers.standard.postalCode);
+            await checkoutInformationPage.enterFirstName(order.customer.firstName);
+            await checkoutInformationPage.enterLastName(order.customer.lastName);
+            await checkoutInformationPage.enterPostalCode(order.customer.postalCode);
 
             const checkoutOverviewPage = await checkoutInformationPage.submitExpectingSuccess();
 
             await expect(checkoutOverviewPage.title).toBeVisible();
             await expect(checkoutOverviewPage.title).toHaveText('Checkout: Overview');
 
-            await expect(checkoutOverviewPage.cartItems).toHaveCount(1);
+            await expect(checkoutOverviewPage.cartItems).toHaveCount(order.products.length);
 
             const overviewItem = checkoutOverviewPage.getCheckoutItemByName(Products.bikeLight.name);
 
@@ -61,7 +64,8 @@ test.describe('Product order e2e', () => {
             await expect(overviewItem.productDescription).toHaveText(Products.bikeLight.description);
             await expect(overviewItem.productPrice).toHaveText(Products.bikeLight.price);
 
-            // A single line item, so the item total is that product's price.
-            await expect(checkoutOverviewPage.subtotalLabel).toContainText(Products.bikeLight.price);
+            await expect(checkoutOverviewPage.subtotalLabel).toContainText(order.itemTotal);
+            await expect(checkoutOverviewPage.taxLabel).toContainText(order.tax);
+            await expect(checkoutOverviewPage.totalLabel).toContainText(order.total);
         });
 });
