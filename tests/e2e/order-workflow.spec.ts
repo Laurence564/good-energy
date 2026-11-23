@@ -2,14 +2,13 @@ import {expect, test} from '@playwright/test';
 import {LoginPage} from '../../src/pages/login.page';
 import {Users} from '../../src/data/users';
 import {Products} from "../../src/data/product";
-import {Customers} from "../../src/data/customer";
 import {Orders} from "../../src/data/order";
 
 test.describe('Product order e2e', () => {
     test('Order a single product',
         async ({page}) => {
 
-             const order = Orders.singleBikeLight;
+            const order = Orders.singleBikeLight;
 
             const loginPage = new LoginPage(page);
             await loginPage.goto();
@@ -42,7 +41,7 @@ test.describe('Product order e2e', () => {
             await expect(cartItem.productDescription).toHaveText(Products.bikeLight.description);
             await expect(cartItem.productPrice).toHaveText(Products.bikeLight.price);
 
-           const checkoutInformationPage = await cartPage.checkout();
+            const checkoutInformationPage = await cartPage.checkout();
 
             await expect(checkoutInformationPage.title).toBeVisible();
             await expect(checkoutInformationPage.title).toHaveText('Checkout: Your Information');
@@ -67,5 +66,16 @@ test.describe('Product order e2e', () => {
             await expect(checkoutOverviewPage.subtotalLabel).toContainText(order.itemTotal);
             await expect(checkoutOverviewPage.taxLabel).toContainText(order.tax);
             await expect(checkoutOverviewPage.totalLabel).toContainText(order.total);
+
+            const checkoutCompletePage = await checkoutOverviewPage.finish();
+
+            await expect(checkoutCompletePage.title).toBeVisible();
+            await expect(checkoutCompletePage.title).toHaveText('Checkout: Complete!');
+
+            await expect(checkoutCompletePage.completeHeader).toHaveText('Thank you for your order!');
+            await expect(checkoutCompletePage.completeText).toBeVisible();
+
+            // The order is placed, so the basket is emptied.
+            await expect(checkoutCompletePage.basketCount).toBeHidden();
         });
 });

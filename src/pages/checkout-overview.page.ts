@@ -1,5 +1,6 @@
+import {type Locator, type Page} from '@playwright/test';
 import {InventoryItem} from './product.card';
-import {Locator, Page} from "@playwright/test";
+import {CheckoutCompletePage} from './checkout-complete.page';
 
 export class CheckoutOverviewPage {
     private readonly page: Page;
@@ -31,5 +32,10 @@ export class CheckoutOverviewPage {
 
     getCheckoutItemByName(productName: string): InventoryItem {
         return new InventoryItem(this.page, productName);
+    }
+
+    async finish(): Promise<CheckoutCompletePage> {
+        await this.finishButton.click();
+        return new CheckoutCompletePage(this.page);
     }
 }
