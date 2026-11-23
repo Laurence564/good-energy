@@ -4,21 +4,22 @@ export class InventoryItem {
     private readonly item: Locator;
 
     constructor(private readonly page: Page, productName: string) {
-        this.item = this.page.locator('.inventory_item').filter({
-            has: this.page.getByText(productName, {exact: true}),
+        this.item = this.page.getByTestId('inventory-item').filter({
+            has: this.page.getByTestId('inventory-item-name')
+                .getByText(productName, {exact: true}),
         });
     }
 
     get productName(): Locator {
-        return this.item.locator('.inventory_item_name');
+        return this.item.getByTestId('inventory-item-name');
     }
 
     get productDescription(): Locator {
-        return this.item.locator('.inventory_item_desc');
+        return this.item.getByTestId('inventory-item-desc');
     }
 
     get productPrice(): Locator {
-        return this.item.locator('.inventory_item_price');
+        return this.item.getByTestId('inventory-item-price');
     }
 
     get addToCartButton(): Locator {
