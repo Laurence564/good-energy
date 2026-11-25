@@ -20,6 +20,7 @@ test.describe('Login — positive path', () => {
             const inventoryPage = await loginPage.submitExpectingSuccess();
 
             // Assert
+            await expect(page).toHaveURL('/inventory.html');
             await expect(inventoryPage.title).toHaveText('Products');
         });
 });
