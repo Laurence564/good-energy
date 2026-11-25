@@ -1,4 +1,4 @@
-import {test} from '@playwright/test';
+import {expect, test} from '@playwright/test';
 import {LoginPage} from '../../src/pages/login.page';
 import {LoginErrors} from '../../src/data/login-errors';
 import {Users} from '../../src/data/users.ts';
@@ -16,10 +16,12 @@ test.describe('Login — negative paths', () => {
             await loginPage.goto();
 
             // Act
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.USERNAME_REQUIRED);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.USERNAME_REQUIRED);
+            await expect(page).toHaveURL('/');
         });
 
     /**
@@ -34,10 +36,12 @@ test.describe('Login — negative paths', () => {
 
             // Act
             await loginPage.enterPassword(Users.STANDARD.password);
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.USERNAME_REQUIRED);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.USERNAME_REQUIRED);
+            await expect(page).toHaveURL('/');
         });
 
     /**
@@ -52,10 +56,12 @@ test.describe('Login — negative paths', () => {
 
             // Act
             await loginPage.enterUsername(Users.STANDARD.username);
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.PASSWORD_REQUIRED);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.PASSWORD_REQUIRED);
+            await expect(page).toHaveURL('/');
         });
 
     /**
@@ -71,10 +77,12 @@ test.describe('Login — negative paths', () => {
             // Act
             await loginPage.enterUsername(Users.STANDARD.username);
             await loginPage.enterPassword(Users.UNKNOWN.password);
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.CREDENTIALS_MISMATCH);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.CREDENTIALS_MISMATCH);
+            await expect(page).toHaveURL('/');
         });
 
     /**
@@ -90,10 +98,12 @@ test.describe('Login — negative paths', () => {
             // Act
             await loginPage.enterUsername(Users.UNKNOWN.username);
             await loginPage.enterPassword(Users.STANDARD.password);
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.CREDENTIALS_MISMATCH);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.CREDENTIALS_MISMATCH);
+            await expect(page).toHaveURL('/');
         });
 
     /**
@@ -109,10 +119,12 @@ test.describe('Login — negative paths', () => {
             // Act
             await loginPage.enterUsername(Users.UNKNOWN.username);
             await loginPage.enterPassword(Users.UNKNOWN.password);
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.CREDENTIALS_MISMATCH);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.CREDENTIALS_MISMATCH);
+            await expect(page).toHaveURL('/');
         });
 
     /**
@@ -128,9 +140,11 @@ test.describe('Login — negative paths', () => {
             // Act
             await loginPage.enterUsername(Users.LOCKED_OUT.username);
             await loginPage.enterPassword(Users.LOCKED_OUT.password);
-            await loginPage.submit();
+            await loginPage.submitExpectingError();
 
             // Assert
-            await loginPage.expectingError(LoginErrors.LOCKED_OUT);
+            await expect(loginPage.errorMessage).toBeVisible();
+            await expect(loginPage.errorMessage).toHaveText(LoginErrors.LOCKED_OUT);
+            await expect(page).toHaveURL('/');
         });
 });
